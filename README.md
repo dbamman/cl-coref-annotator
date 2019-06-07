@@ -7,7 +7,7 @@ Run with:
 python3 anno.py 711_allan_quatermain_brat.txt 711_allan_quatermain_brat.ann 711_allan_quatermain_brat.out
 ```
 
-Input files are brat .ann and .txt files:
+Input files are brat .ann and .txt files -- it presumes that you've already carried out mention annotations in brat.
 
 * 711\_allan\_quatermain_brat.txt
 * 711\_allan\_quatermain_brat.ann
