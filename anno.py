@@ -522,9 +522,10 @@ while(1):
 
 		for eid, v in counts.most_common():
 			vals=[]
-			for k,c in t_names[eid].most_common():
-				vals.append("%s:%s" % (k,c))
-			print ("VAL: %s\t%s" % (eid, ', '.join(vals)))
+			if eid in t_names:
+				for k,c in t_names[eid].most_common():
+					vals.append("%s:%s" % (k,c))
+				print ("VAL: %s\t%s" % (eid, ', '.join(vals)))
 
 
 	matcher=re.match("^n$", inline)
