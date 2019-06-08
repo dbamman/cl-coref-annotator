@@ -22,7 +22,7 @@ Usage:
 |---|---|
 |n|creates new entity|
 |n 17|creates new entity for mention 17|
-|<enter>|Accept the suggestion above the prompt (e.g., 'T52 0' links mention T52 to entity 0|
+|[enter]|Accept the suggestion above the prompt (e.g., 'T52 0' links mention T52 to entity 0|
 |17|links highlighted mention to existing entity 17|
 |14 17|links mention T14 to existing entity 17|
 |-1|skip the current mention and go on to the next|
