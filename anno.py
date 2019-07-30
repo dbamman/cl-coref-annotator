@@ -7,6 +7,11 @@
 import sys, re, operator
 from collections import Counter
 
+word_per_line=20 #30# 20 #30
+LINES_PER_CHUNK=10 #20 # 10 # 20
+ENTITY_WIDTH=25 #50 #25 #50
+
+
 PINK = '\033[95m'
 ENDC = '\033[0m'
 # Bold High Intensty
@@ -165,6 +170,7 @@ def proc_anno(filename):
 			cols=line.rstrip().split("\t")
 			idd=cols[0]
 			dat=cols[1].split(" ")
+			print(cols)
 			t=cols[2]
 
 			cat=dat[0]
@@ -211,9 +217,19 @@ outFile=sys.argv[3]
 read_coref(outFile)
 
 
+def search(query):
+	count=0
+	print ("\nMatches:")
+	for eid in names:
+		if re.search(query, names[eid], re.I) != None:
+			print("%s%s\t%s%s" % (Red, eid, names[eid], ENDC))
+			count+=1
+	if count == 0:
+		print ("No matches")
+
 def print_screen():
 	global chunk_id, ent_colors
-	print ("".join(["="]*120))
+	print ("".join(["="]*6*word_per_line))
 	charlen=0
 	startchunkpos=0
 	line_start_char=0
@@ -225,12 +241,11 @@ def print_screen():
 
 	lines=[]
 	# 20 words per line
-	for i in range(0,len(words), 20):
-		lines.append(words[i:i+20])
+	for i in range(0,len(words), word_per_line):
+		lines.append(words[i:i+word_per_line])
 	chunks=[]
 
 	# 8 lines per chunk
-	LINES_PER_CHUNK=12
 	for i in range(0, len(lines), LINES_PER_CHUNK):
 		chunks.append(lines[i:i+LINES_PER_CHUNK])
 
@@ -361,8 +376,8 @@ def print_screen():
 		if name in ent_colors:
 			color=ent_colors[name]
 		entstr="%s\t%s (%d)" % (name, names[name], v)
-		lenn=len(entstr[:25])
-		entstr=color+entstr[:25]+ENDC+"".join([" "]*(25-lenn))
+		lenn=len(entstr[:ENTITY_WIDTH])
+		entstr=color+entstr[:ENTITY_WIDTH]+ENDC+"".join([" "]*(ENTITY_WIDTH-lenn-1))
 		ents.append(entstr)
 
 
@@ -371,11 +386,11 @@ def print_screen():
 		n=""
 		if i < len(ents):
 			n=ents[i]
-		print ("%s\t%s\t%s" % (n.ljust(25), "|" , output[i].ljust(125)))
+		print ("%s\t%s\t%s" % (n.ljust(ENTITY_WIDTH), "|" , output[i].ljust(125)))
 	return target
 
 def print_help():	
-	print ("".join(["="]*120))	
+	print ("".join(["="]*6*word_per_line))	
 	print ("Usage:\n")
 	print ("n -- creates new entity" )
 	print ("n 17 -- creates new entity for mention 17" )
@@ -388,14 +403,16 @@ def print_help():
 	print ("del 14 -- deletes annotation for mention T14")
 	print ("entities -- displays all current entities")
 	print ("names -- displays all mentions for each entity")
+	print ("relations -- displays all appos/cop relations")
 	print ("w -- save annotations to output file")
+	print ("s tom -- search existing entities to find those that contain 'tom'")
 	print ("q -- quit and save annotations to output file")
 	print ("> -- advance to next page")
 	print ("< -- go to previous page")
 	print ("name 17 the main narrator -- assigns the name 'the main narrator' to entity 17")
 	print ("add he 59 0 -- creates a new mention for the first mention of the word 'he' between mention T59 and T0; use this if you see a pronoun that should be linked in coreference but isn't a linkable candidate mention.")
 	print ("add he 59 0 2 -- creates a new mention for the second mention of the word 'he' between mention T59 and T0; use this if you see a pronoun that should be linked in coreference but isn't a linkable candidate mention.")
-	print ("".join(["="]*120))
+	print ("".join(["="]*6*word_per_line))
 	print ("")
 
 print_help()
@@ -482,7 +499,10 @@ while(1):
 	matcher=re.match("^del T?(\d+)$", inline)
 	if matcher != None:
 		idd="T%s" % matcher.group(1)
-		del entities[idd]
+		if idd in entities:
+			del entities[idd]
+		if idd in deps:
+			del deps[idd]
 
 	matcher=re.match("^cop T?(\d+) T?(\d+)$", inline)
 	if matcher != None:
@@ -511,6 +531,11 @@ while(1):
 		for tid in entities:
 			print ("ENTITY: %s\t%s" % (tid, entities[tid]))
 	
+	matcher=re.match("^relations$", inline)
+	if matcher != None:
+		for source in deps:
+			print("%s -> %s\t%s" % (source, deps[source][0], deps[source][1]))
+
 	matcher=re.match("^names$", inline)
 	if matcher != None:
 		t_names={}
@@ -570,6 +595,11 @@ while(1):
 		nid=int(matcher.group(1))
 		name=matcher.group(2)
 		names[nid]=name
+
+	matcher=re.match("s (.+)$", inline)
+	if matcher != None:
+		name=matcher.group(1)
+		search(name)
 
 	matcher=re.match(">", inline)
 	if matcher != None:
