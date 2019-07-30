@@ -31,6 +31,7 @@ Usage:
 |del 14|deletes annotation for mention T14|
 |entities|displays all current entities|
 |names|displays all mentions for each entity|
+|s tom|search existing entities to find those that contain 'tom'|
 |w|save annotations to output file|
 |q|quit and save annotations to output file|
 |>|advance to next page|
