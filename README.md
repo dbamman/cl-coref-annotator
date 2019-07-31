@@ -1,6 +1,8 @@
 # cl-coref-annotator
 Command-line tool for coreference annotation
 
+<img src='cl-image.png'/>
+
 Run with:
 
 ```sh
