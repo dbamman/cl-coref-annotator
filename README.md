@@ -14,7 +14,7 @@ Input files are brat .ann and .txt files -- it presumes that you've already carr
 * 711\_allan\_quatermain_brat.txt
 * 711\_allan\_quatermain_brat.ann
 
-Output file contains links betweens brat mentions and unique entities:
+Output file contains links between brat mentions and unique entities:
 
 * 711\_allan\_quatermain\_brat.out
 
